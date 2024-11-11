@@ -9,17 +9,27 @@ This Home Library Service is developed with NestJS and Node.js. Users can create
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
-### Clone Repository
+### Get started
 
 To get started, clone the repository with the following command:
 
 ```bash
-git clone {repository URL}
+git clone https://github.com/liudmilarodzina/nodejs2024Q3-service.git
 ```
 
-### Install Dependencies
+Navigate to the project directory:
 
-Navigate to the project directory and run:
+```bash
+cd nodejs2024Q3-service
+```
+
+Switch to develop branch:
+
+```bash
+git checkout develop
+```
+
+Install the dependencies:
 
 ```bash
 npm install
