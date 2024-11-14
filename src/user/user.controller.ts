@@ -6,6 +6,9 @@ import {
   Param,
   Body,
   NotFoundException,
+  ValidationPipe,
+  UsePipes,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,16 +22,16 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAllUsers() {
-    return this.userService.getAllUsers();
+  async getAllUsers() {
+    return await this.userService.getAllUsers();
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string) {
+  async getUserById(@Param('id') id: string) {
     if (!isUuid(id)) {
       throw new BadRequestException('Invalid UUID format');
     }
-    const user = this.userService.getUserById(id);
+    const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -36,43 +39,31 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    if (!createUserDto.login || !createUserDto.password) {
-      throw new BadRequestException('Login and password are required');
-    }
-    return this.userService.createUser(createUserDto);
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.createUser(createUserDto);
   }
 
   @Put(':id')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateUserPassword(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
-
-    if (!updatePasswordDto.oldPassword || !updatePasswordDto.newPassword) {
-      throw new BadRequestException(
-        'Old password and new password are required',
-      );
-    }
-
-    const updatedUser = this.userService.updateUser(id, updatePasswordDto);
+    const updatedUser = await this.userService.updateUser(
+      id,
+      updatePasswordDto,
+    );
     if (!updatedUser) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-
     return updatedUser;
   }
 
   @DeleteWithNoContent(':id')
-  deleteUser(@Param('id') id: string) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
-    const isDeleted = this.userService.deleteUser(id);
-    if (!isDeleted) {
+  async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
+    const isUserDeleted = await this.userService.deleteUser(id);
+    if (!isUserDeleted) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
