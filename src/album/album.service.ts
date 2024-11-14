@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService {
   private albums = [];
+
+  constructor(private readonly trackService: TrackService) {}
 
   getAllAlbums() {
     return this.albums;
@@ -33,9 +36,11 @@ export class AlbumService {
     return updatedAlbum;
   }
 
-  deleteAlbum(id: string) {
+  async deleteAlbum(id: string) {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
     if (albumIndex === -1) return null;
+
+    await this.trackService.nullifyAlbumId(id);
 
     this.albums.splice(albumIndex, 1);
     return true;

@@ -22,12 +22,16 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Get()
-  async getAll() {
+  async getAllArtists() {
     return await this.artistService.getAllArtists();
   }
 
   @Get(':id')
-  async getArtistById(@Param('id', new ParseUUIDPipe()) id: string) {
+  async getArtistById(@Param('id') id: string) {
+    if (!isUuid(id)) {
+      throw new BadRequestException('Invalid UUID format');
+    }
+
     const artist = await this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
@@ -47,15 +51,14 @@ export class ArtistController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
-
-    const artist = await this.artistService.updateArtist(id, updateArtistDto);
-    if (!artist) {
+    const updatedArtist = await this.artistService.updateArtist(
+      id,
+      updateArtistDto,
+    );
+    if (!updatedArtist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
-    return artist;
+    return updatedArtist;
   }
 
   @DeleteWithNoContent(':id')
@@ -64,5 +67,6 @@ export class ArtistController {
     if (!isArtistDeleted) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
+    return;
   }
 }

@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   UsePipes,
@@ -46,25 +47,21 @@ export class AlbumController {
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateAlbum(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
-
-    const album = await this.albumService.updateAlbum(id, updateAlbumDto);
-    if (!album) {
+    const updatedAlbum = await this.albumService.updateAlbum(
+      id,
+      updateAlbumDto,
+    );
+    if (!updatedAlbum) {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
-    return album;
+    return updatedAlbum;
   }
 
   @DeleteWithNoContent(':id')
-  async deleteAlbum(@Param('id') id: string) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
+  async deleteAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
     const isAlbumDeleted = await this.albumService.deleteAlbum(id);
     if (!isAlbumDeleted) {
       throw new NotFoundException(`Album with ID ${id} not found`);
