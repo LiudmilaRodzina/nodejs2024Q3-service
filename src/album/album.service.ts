@@ -3,10 +3,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { TrackService } from 'src/track/track.service';
+import { Album } from './interfaces/album.interface';
 
 @Injectable()
 export class AlbumService {
-  private albums = [];
+  private albums: Album[] = [];
 
   constructor(private readonly trackService: TrackService) {}
 
@@ -46,7 +47,7 @@ export class AlbumService {
     return true;
   }
 
-  async nullifyArtistId(artistId: string): Promise<void> {
+  async nullifyArtistId(artistId: string) {
     this.albums.forEach((album) => {
       if (album.artistId === artistId) {
         album.artistId = null;

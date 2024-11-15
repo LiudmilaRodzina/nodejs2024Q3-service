@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -15,7 +14,6 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DeleteWithNoContent } from 'src/decorators/delete.decorator';
-import { validate as isUuid } from 'uuid';
 
 @Controller('album')
 export class AlbumController {
@@ -27,10 +25,8 @@ export class AlbumController {
   }
 
   @Get(':id')
-  async getAlbumById(@Param('id') id: string) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
     const album = await this.albumService.getAlbumById(id);
     if (!album) {
       throw new NotFoundException(`Album with ID ${id} not found`);
@@ -47,7 +43,7 @@ export class AlbumController {
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateAlbum(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
     const updatedAlbum = await this.albumService.updateAlbum(
@@ -61,7 +57,7 @@ export class AlbumController {
   }
 
   @DeleteWithNoContent(':id')
-  async deleteAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+  async deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
     const isAlbumDeleted = await this.albumService.deleteAlbum(id);
     if (!isAlbumDeleted) {
       throw new NotFoundException(`Album with ID ${id} not found`);

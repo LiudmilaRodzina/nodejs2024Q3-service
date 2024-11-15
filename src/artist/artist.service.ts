@@ -3,12 +3,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
+import { Artist } from './interfaces/artist.interface';
 
 @Injectable()
 export class ArtistService {
-  private artists = [];
+  private artists: Artist[] = [];
 
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
+  ) {}
 
   getAllArtists() {
     return this.artists;
@@ -38,6 +43,7 @@ export class ArtistService {
     if (artistIndex === -1) return null;
 
     await this.albumService.nullifyArtistId(id);
+    await this.trackService.nullifyArtistId(id);
 
     this.artists.splice(artistIndex, 1);
     return true;

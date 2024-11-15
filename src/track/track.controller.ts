@@ -6,7 +6,6 @@ import {
   Param,
   Put,
   NotFoundException,
-  BadRequestException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,7 +14,6 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ParseUUIDPipe } from '@nestjs/common/pipes/parse-uuid.pipe';
 import { DeleteWithNoContent } from 'src/decorators/delete.decorator';
-import { validate as isUuid } from 'uuid';
 
 @Controller('track')
 export class TrackController {
@@ -27,10 +25,8 @@ export class TrackController {
   }
 
   @Get(':id')
-  async getTrackById(@Param('id') id: string) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
     const track = await this.trackService.getTrackById(id);
     if (!track) {
       throw new NotFoundException(`Track with ID ${id} not found`);
@@ -47,7 +43,7 @@ export class TrackController {
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateTrack(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
     const updatedTrack = await this.trackService.updateTrack(
@@ -61,7 +57,7 @@ export class TrackController {
   }
 
   @DeleteWithNoContent(':id')
-  async deleteTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+  async deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
     const isTrackDeleted = await this.trackService.deleteTrack(id);
     if (!isTrackDeleted) {
       throw new NotFoundException(`Track with ID ${id} not found`);
