@@ -41,13 +41,13 @@ export class AlbumService {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
     if (albumIndex === -1) return null;
 
-    await this.trackService.nullifyAlbumId(id);
+    await this.trackService.deleteAlbumFromTracks(id);
 
     this.albums.splice(albumIndex, 1);
     return true;
   }
 
-  async nullifyArtistId(artistId: string) {
+  async deleteArtistFromAlbums(artistId: string) {
     this.albums.forEach((album) => {
       if (album.artistId === artistId) {
         album.artistId = null;

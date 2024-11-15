@@ -27,7 +27,7 @@ export class FavoritesController {
 
   @DeleteWithNoContent('track/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async removeTrackFromFavorites(@Param('id', ParseUUIDPipe) trackId: string) {
+  async deleteTrackFromFavorites(@Param('id', ParseUUIDPipe) trackId: string) {
     return this.favoritesService.deleteTrackFromFavorites(trackId);
   }
 
@@ -39,7 +39,7 @@ export class FavoritesController {
 
   @DeleteWithNoContent('album/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async removeAlbumFromFavorites(@Param('id', ParseUUIDPipe) albumId: string) {
+  async deleteAlbumFromFavorites(@Param('id', ParseUUIDPipe) albumId: string) {
     return this.favoritesService.deleteAlbumFromFavorites(albumId);
   }
 
@@ -51,7 +51,7 @@ export class FavoritesController {
 
   @DeleteWithNoContent('artist/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async removeArtistFromFavorites(
+  async deleteArtistFromFavorites(
     @Param('id', ParseUUIDPipe) artistId: string,
   ) {
     return this.favoritesService.deleteArtistFromFavorites(artistId);
