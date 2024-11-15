@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { Track } from './interfaces/track.interface';
 
 @Injectable()
 export class TrackService {
-  private tracks = [];
+  private tracks: Track[] = [];
 
   getAllTracks() {
     return this.tracks;
   }
 
   getTrackById(id: string) {
-    return this.tracks.find((track) => track.id === id);
+    return this.tracks.find((track) => track.id === id) || null;
   }
 
   createTrack(createTrackDto: CreateTrackDto) {
@@ -38,10 +39,18 @@ export class TrackService {
     return true;
   }
 
-  async nullifyAlbumId(albumId: string): Promise<void> {
+  async nullifyAlbumId(albumId: string) {
     this.tracks.forEach((track) => {
       if (track.albumId === albumId) {
         track.albumId = null;
+      }
+    });
+  }
+
+  async nullifyArtistId(artistId: string) {
+    this.tracks.forEach((track) => {
+      if (track.artistId === artistId) {
+        track.artistId = null;
       }
     });
   }

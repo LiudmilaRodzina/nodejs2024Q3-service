@@ -9,13 +9,11 @@ import {
   NotFoundException,
   UsePipes,
   ValidationPipe,
-  BadRequestException,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DeleteWithNoContent } from 'src/decorators/delete.decorator';
-import { validate as isUuid } from 'uuid';
 
 @Controller('artist')
 export class ArtistController {
@@ -27,11 +25,8 @@ export class ArtistController {
   }
 
   @Get(':id')
-  async getArtistById(@Param('id') id: string) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
-
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
     const artist = await this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
@@ -48,7 +43,7 @@ export class ArtistController {
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateArtist(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
     const updatedArtist = await this.artistService.updateArtist(
@@ -62,7 +57,7 @@ export class ArtistController {
   }
 
   @DeleteWithNoContent(':id')
-  async deleteArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+  async deleteArtist(@Param('id', ParseUUIDPipe) id: string) {
     const isArtistDeleted = await this.artistService.deleteArtist(id);
     if (!isArtistDeleted) {
       throw new NotFoundException(`Artist with ID ${id} not found`);

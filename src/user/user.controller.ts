@@ -13,8 +13,6 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { BadRequestException } from '@nestjs/common';
-import { validate as isUuid } from 'uuid';
 import { DeleteWithNoContent } from 'src/decorators/delete.decorator';
 
 @Controller('user')
@@ -27,10 +25,8 @@ export class UserController {
   }
 
   @Get(':id')
-  async getUserById(@Param('id') id: string) {
-    if (!isUuid(id)) {
-      throw new BadRequestException('Invalid UUID format');
-    }
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -47,7 +43,7 @@ export class UserController {
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateUserPassword(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     const updatedUser = await this.userService.updateUser(
@@ -61,7 +57,7 @@ export class UserController {
   }
 
   @DeleteWithNoContent(':id')
-  async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
     const isUserDeleted = await this.userService.deleteUser(id);
     if (!isUserDeleted) {
       throw new NotFoundException(`User with ID ${id} not found`);
