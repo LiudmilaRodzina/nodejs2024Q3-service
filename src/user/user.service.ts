@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,12 +11,18 @@ import { v4 as uuidv4 } from 'uuid';
 export class UserService {
   private users = [];
 
+  private excludePassword(user: any) {
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
   getAllUsers() {
-    return this.users;
+    return this.users.map((user) => this.excludePassword(user));
   }
 
   getUserById(id: string) {
-    return this.users.find((user) => user.id === id);
+    const user = this.users.find((user) => user.id === id);
+    return user ? this.excludePassword(user) : null;
   }
 
   createUser(createUserDto: CreateUserDto) {
@@ -24,31 +34,26 @@ export class UserService {
       version: 1,
     };
     this.users.push(newUser);
-
-    const { password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword;
+    return this.excludePassword(newUser);
   }
 
   updateUser(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = this.getUserById(id);
-    if (!user) return null;
+    const user = this.users.find((user) => user.id === id);
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Incorrect old password');
     }
     user.password = updatePasswordDto.newPassword;
     user.updatedAt = Date.now();
     user.version++;
-
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return this.excludePassword(user);
   }
 
   deleteUser(id: string) {
     const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex > -1) {
-      this.users.splice(userIndex, 1);
-      return true;
+    if (userIndex === -1) {
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
-    return false;
+    this.users.splice(userIndex, 1);
   }
 }

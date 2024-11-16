@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { ParseUUIDPipe } from '@nestjs/common';
 import { DeleteWithNoContent } from 'src/decorators/delete.decorator';
@@ -20,38 +13,32 @@ export class FavoritesController {
   }
 
   @Post('track/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async addTrackToFavorites(@Param('id', ParseUUIDPipe) trackId: string) {
     return this.favoritesService.addTrackToFavorites(trackId);
   }
 
   @DeleteWithNoContent('track/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async removeTrackFromFavorites(@Param('id', ParseUUIDPipe) trackId: string) {
+  async deleteTrackFromFavorites(@Param('id', ParseUUIDPipe) trackId: string) {
     return this.favoritesService.deleteTrackFromFavorites(trackId);
   }
 
   @Post('album/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async addAlbumToFavorites(@Param('id', ParseUUIDPipe) albumId: string) {
     return this.favoritesService.addAlbumToFavorites(albumId);
   }
 
   @DeleteWithNoContent('album/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async removeAlbumFromFavorites(@Param('id', ParseUUIDPipe) albumId: string) {
+  async deleteAlbumFromFavorites(@Param('id', ParseUUIDPipe) albumId: string) {
     return this.favoritesService.deleteAlbumFromFavorites(albumId);
   }
 
   @Post('artist/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async addArtistToFavorites(@Param('id', ParseUUIDPipe) artistId: string) {
     return this.favoritesService.addArtistToFavorites(artistId);
   }
 
   @DeleteWithNoContent('artist/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async removeArtistFromFavorites(
+  async deleteArtistFromFavorites(
     @Param('id', ParseUUIDPipe) artistId: string,
   ) {
     return this.favoritesService.deleteArtistFromFavorites(artistId);

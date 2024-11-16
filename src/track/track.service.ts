@@ -39,18 +39,10 @@ export class TrackService {
     return true;
   }
 
-  async nullifyAlbumId(albumId: string) {
+  async deleteAlbumFromTracks(albumId: string) {
     this.tracks.forEach((track) => {
       if (track.albumId === albumId) {
         track.albumId = null;
-      }
-    });
-  }
-
-  async nullifyArtistId(artistId: string) {
-    this.tracks.forEach((track) => {
-      if (track.artistId === artistId) {
-        track.artistId = null;
       }
     });
   }

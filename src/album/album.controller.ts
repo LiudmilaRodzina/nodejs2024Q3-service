@@ -7,8 +7,6 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -25,7 +23,6 @@ export class AlbumController {
   }
 
   @Get(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
     const album = await this.albumService.getAlbumById(id);
     if (!album) {
@@ -35,13 +32,11 @@ export class AlbumController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
     return await this.albumService.createAlbum(createAlbumDto);
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateAlbum(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,

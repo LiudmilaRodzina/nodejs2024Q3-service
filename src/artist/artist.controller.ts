@@ -7,8 +7,6 @@ import {
   Body,
   ParseUUIDPipe,
   NotFoundException,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -25,7 +23,6 @@ export class ArtistController {
   }
 
   @Get(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
     const artist = await this.artistService.getArtistById(id);
     if (!artist) {
@@ -35,13 +32,11 @@ export class ArtistController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async createArtist(@Body() createArtistDto: CreateArtistDto) {
     return await this.artistService.createArtist(createArtistDto);
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateArtist(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
