@@ -59,6 +59,10 @@ To run the app in development mode with hot-reloading, use:
 npm run start:dev
 ```
 
+### API Documentation
+
+API Documentation is provide in doc/api.yaml file
+
 ### Testing
 
 After application running open new terminal and enter:

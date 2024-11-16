@@ -6,8 +6,6 @@ import {
   Param,
   Put,
   NotFoundException,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -25,7 +23,6 @@ export class TrackController {
   }
 
   @Get(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
     const track = await this.trackService.getTrackById(id);
     if (!track) {
@@ -35,13 +32,11 @@ export class TrackController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async createTrack(@Body() createTrackDto: CreateTrackDto) {
     return await this.trackService.createTrack(createTrackDto);
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateTrack(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,

@@ -46,12 +46,4 @@ export class TrackService {
       }
     });
   }
-
-  // async deleteArtistFromTracks(artistId: string) {
-  //   this.tracks.forEach((track) => {
-  //     if (track.artistId === artistId) {
-  //       track.artistId = null;
-  //     }
-  //   });
-  // }
 }
