@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -25,10 +25,11 @@ export class AlbumService {
     return newAlbum;
   }
 
-  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
+  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto): Album {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
-    if (albumIndex === -1) return null;
-
+    if (albumIndex === -1) {
+      throw new NotFoundException(`Album with ID ${id} not found`);
+    }
     const updatedAlbum = {
       ...this.albums[albumIndex],
       ...updateAlbumDto,
@@ -37,12 +38,12 @@ export class AlbumService {
     return updatedAlbum;
   }
 
-  async deleteAlbum(id: string) {
+  async deleteAlbum(id: string): Promise<boolean> {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
-    if (albumIndex === -1) return null;
-
+    if (albumIndex === -1) {
+      throw new NotFoundException(`Album with ID ${id} not found`);
+    }
     await this.trackService.deleteAlbumFromTracks(id);
-
     this.albums.splice(albumIndex, 1);
     return true;
   }
