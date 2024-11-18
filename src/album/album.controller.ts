@@ -41,21 +41,11 @@ export class AlbumController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    const updatedAlbum = await this.albumService.updateAlbum(
-      id,
-      updateAlbumDto,
-    );
-    if (!updatedAlbum) {
-      throw new NotFoundException(`Album with ID ${id} not found`);
-    }
-    return updatedAlbum;
+    return await this.albumService.updateAlbum(id, updateAlbumDto);
   }
 
   @DeleteWithNoContent(':id')
   async deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    const isAlbumDeleted = await this.albumService.deleteAlbum(id);
-    if (!isAlbumDeleted) {
-      throw new NotFoundException(`Album with ID ${id} not found`);
-    }
+    await this.albumService.deleteAlbum(id);
   }
 }

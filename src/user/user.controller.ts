@@ -5,7 +5,6 @@ import {
   Put,
   Param,
   Body,
-  NotFoundException,
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -24,11 +23,7 @@ export class UserController {
 
   @Get(':id')
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    const user = await this.userService.getUserById(id);
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-    return user;
+    return this.userService.getUserById(id);
   }
 
   @Post()
@@ -41,11 +36,7 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const updatedUser = await this.userService.updateUser(
-      id,
-      updatePasswordDto,
-    );
-    return updatedUser;
+    return this.userService.updateUserPassword(id, updatePasswordDto);
   }
 
   @DeleteWithNoContent(':id')

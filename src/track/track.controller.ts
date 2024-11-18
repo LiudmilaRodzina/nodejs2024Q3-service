@@ -41,21 +41,11 @@ export class TrackController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    const updatedTrack = await this.trackService.updateTrack(
-      id,
-      updateTrackDto,
-    );
-    if (!updatedTrack) {
-      throw new NotFoundException(`Track with ID ${id} not found`);
-    }
-    return updatedTrack;
+    return await this.trackService.updateTrack(id, updateTrackDto);
   }
 
   @DeleteWithNoContent(':id')
   async deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
-    const isTrackDeleted = await this.trackService.deleteTrack(id);
-    if (!isTrackDeleted) {
-      throw new NotFoundException(`Track with ID ${id} not found`);
-    }
+    await this.trackService.deleteTrack(id);
   }
 }
