@@ -17,12 +17,13 @@ export class UserService {
   }
 
   getAllUsers() {
-    return this.users.map((user) => this.excludePassword(user));
+    return this.users.map(this.excludePassword);
   }
 
   getUserById(id: string) {
     const user = this.users.find((user) => user.id === id);
-    return user ? this.excludePassword(user) : null;
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    return this.excludePassword(user);
   }
 
   createUser(createUserDto: CreateUserDto) {
@@ -37,7 +38,7 @@ export class UserService {
     return this.excludePassword(newUser);
   }
 
-  updateUser(id: string, updatePasswordDto: UpdatePasswordDto) {
+  updateUserPassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = this.users.find((user) => user.id === id);
     if (!user) throw new NotFoundException(`User with ID ${id} not found`);
     if (user.password !== updatePasswordDto.oldPassword) {

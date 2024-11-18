@@ -25,21 +25,22 @@ export class ArtistService {
     return newArtist;
   }
 
-  updateArtist(id: string, updateArtistDto: UpdateArtistDto) {
+  updateArtist(id: string, updateArtistDto: UpdateArtistDto): Artist {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-    if (artistIndex === -1) return null;
-
+    if (artistIndex === -1) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
     const updatedArtist = { ...this.artists[artistIndex], ...updateArtistDto };
     this.artists[artistIndex] = updatedArtist;
     return updatedArtist;
   }
 
-  async deleteArtist(id: string) {
+  async deleteArtist(id: string): Promise<boolean> {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-    if (artistIndex === -1) throw new NotFoundException('Artist not found');
-
+    if (artistIndex === -1) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
     await this.albumService.deleteArtistFromAlbums(id);
-
     this.artists.splice(artistIndex, 1);
     return true;
   }

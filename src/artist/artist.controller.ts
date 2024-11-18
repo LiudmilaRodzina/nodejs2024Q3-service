@@ -41,22 +41,11 @@ export class ArtistController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const updatedArtist = await this.artistService.updateArtist(
-      id,
-      updateArtistDto,
-    );
-    if (!updatedArtist) {
-      throw new NotFoundException(`Artist with ID ${id} not found`);
-    }
-    return updatedArtist;
+    return await this.artistService.updateArtist(id, updateArtistDto);
   }
 
   @DeleteWithNoContent(':id')
   async deleteArtist(@Param('id', ParseUUIDPipe) id: string) {
-    const isArtistDeleted = await this.artistService.deleteArtist(id);
-    if (!isArtistDeleted) {
-      throw new NotFoundException(`Artist with ID ${id} not found`);
-    }
-    return;
+    await this.artistService.deleteArtist(id);
   }
 }
