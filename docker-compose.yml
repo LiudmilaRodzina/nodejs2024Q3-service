@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    image: liudmilarodzina/nodejs2024q3-service-app:latest
     ports:
       - '${PORT}:${PORT}'
     environment:
