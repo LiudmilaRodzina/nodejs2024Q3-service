@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    image: liudmilarodzina/nodejs2024q3-service-app:latest
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      - PORT=${PORT}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
