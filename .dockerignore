@@ -1,7 +1,8 @@
 node_modules
-postgres
-.git
-.gitignore
+dist
 Dockerfile
-compose.yaml
+docker-compose.yml
+.env
+.git
 README.md
+# *.log
