@@ -6,9 +6,9 @@ This Home Library Service is developed with NestJS and Node.js. Users can create
 
 ### Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
-- Docker - [Download & Install Docker](https://www.docker.com/get-started).
+- Git - [Download & Install Git](https://git-scm.com/downloads)
+- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager
+- Docker - [Download & Install Docker](https://www.docker.com/get-started)
 
 ### Get started
 
@@ -24,7 +24,7 @@ Navigate to the project directory:
 cd nodejs2024Q3-service
 ```
 
-Switch to development branch:
+Switch to the development branch:
 
 ```bash
 git checkout part_2
@@ -38,6 +38,12 @@ You can change the port. Open the `.env` file and set the desired port number:
 
 ```bash
 PORT=4000
+```
+
+Install the dependencies:
+
+```bash
+npm install
 ```
 
 ### Running application
@@ -65,12 +71,6 @@ npm run docker:scan
 ```
 
 #### Without Docker
-
-Install the dependencies:
-
-```bash
-npm install
-```
 
 To start the application:
 
