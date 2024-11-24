@@ -1,4 +1,4 @@
-FROM node:22-alpine AS build
+FROM node:22-alpine as build
 
 WORKDIR /app
 
@@ -9,6 +9,7 @@ RUN npm cache clean --force && npm ci
 COPY . .
 
 RUN npm run build
+RUN npx prisma generate
 
 FROM node:22-alpine
 
