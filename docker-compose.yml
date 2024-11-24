@@ -5,13 +5,35 @@ services:
       - '${PORT}:${PORT}'
     environment:
       - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - .:/app
       - /app/node_modules
+    depends_on:
+      - db
     networks:
-      - app-network
+      app-network:
+        aliases:
+          - app
+    restart: always
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      app-network:
+        aliases:
+          - db
     restart: always
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  pgdata:
