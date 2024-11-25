@@ -1,15 +1,14 @@
 import {
+  Body,
   Controller,
   Get,
+  Param,
+  ParseUUIDPipe,
   Post,
   Put,
-  Param,
-  Body,
-  ParseUUIDPipe,
 } from '@nestjs/common';
+import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
 import { DeleteWithNoContent } from 'src/decorators/delete.decorator';
 
 @Controller('user')
