@@ -25,6 +25,7 @@ services:
       POSTGRES_DB: mydb
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - logdata:/var/log/postgresql
     networks:
       app-network:
         aliases:
@@ -37,3 +38,4 @@ networks:
 
 volumes:
   pgdata:
+  logdata:
