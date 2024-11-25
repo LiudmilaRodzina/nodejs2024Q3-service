@@ -7,17 +7,17 @@ export class LoggingMiddleware implements NestMiddleware {
   constructor(private readonly loggingService: LoggingService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    const { method, originalUrl } = req;
-    const body = JSON.stringify(req.body);
-    const query = JSON.stringify(req.query);
+    const { method, url, query, body } = req;
     const startTime = Date.now();
 
     res.on('finish', () => {
-      const { statusCode } = res;
       const duration = Date.now() - startTime;
-      this.loggingService.log(
-        `Method: ${method}, URL: ${originalUrl}, Body: ${body}, Query: ${query}, Status: ${statusCode}, Duration: ${duration}ms`,
-      );
+      const logMessage = `[${method}] ${url} - Query: ${JSON.stringify(
+        query,
+      )} - Body: ${JSON.stringify(body)} - Status: ${
+        res.statusCode
+      } - Duration: ${duration}ms`;
+      this.loggingService.log(logMessage);
     });
 
     next();

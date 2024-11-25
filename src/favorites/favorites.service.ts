@@ -1,13 +1,14 @@
 import {
+  Injectable,
   forwardRef,
   Inject,
-  Injectable,
   UnprocessableEntityException,
+  NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { ArtistService } from 'src/artist/artist.service';
-import { AlbumService } from 'src/album/album.service';
-import { TrackService } from 'src/track/track.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { ArtistService } from '../artist/artist.service';
+import { AlbumService } from '../album/album.service';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class FavoritesService {
@@ -34,11 +35,7 @@ export class FavoritesService {
     const albums = favorites.filter((fav) => fav.album).map((fav) => fav.album);
     const tracks = favorites.filter((fav) => fav.track).map((fav) => fav.track);
 
-    return {
-      artists,
-      albums,
-      tracks,
-    };
+    return { artists, albums, tracks };
   }
 
   async addTrackToFavorites(trackId: string, userId: string) {

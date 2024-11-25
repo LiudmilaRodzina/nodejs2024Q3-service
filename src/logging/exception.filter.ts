@@ -1,40 +1,43 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { LoggingService } from './logging.service';
 
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
+export class CustomExceptionFilter implements ExceptionFilter {
   constructor(private readonly loggingService: LoggingService) {}
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse();
+    const request = ctx.getRequest();
+
     const status =
-      exception instanceof HttpException ? exception.getStatus() : 500;
-
-    const message =
       exception instanceof HttpException
-        ? exception.getResponse()
-        : 'Internal Server Error';
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    this.loggingService.error(
-      `Method: ${request.method}, URL: ${
-        request.url
-      }, Status: ${status}, Message: ${JSON.stringify(message)}`,
-      (exception as Error).stack || '',
-    );
-
-    response.status(status).json({
+    const errorResponse = {
       statusCode: status,
-      message,
       timestamp: new Date().toISOString(),
       path: request.url,
-    });
+      message:
+        exception instanceof HttpException
+          ? exception.message
+          : 'Internal server error',
+    };
+
+    this.loggingService.error(
+      `Error occurred on ${request.method} ${request.url}: ${JSON.stringify(
+        errorResponse,
+      )}`,
+      exception instanceof Error ? exception.stack : undefined,
+    );
+
+    response.status(status).json(errorResponse);
   }
 }

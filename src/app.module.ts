@@ -1,32 +1,31 @@
-import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { ArtistModule } from './artist/artist.module';
-import { AlbumModule } from './album/album.module';
-import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
-import { LoggingModule } from './logging/logging.module';
-import { LoggingMiddleware } from './logging/logging.middleware';
+import { AuthModule } from './auth/auth.module';
+import { AlbumModule } from './album/album.module';
+import { ArtistModule } from './artist/artist.module';
+import { LoggingService } from './logging/logging.service';
+import { TrackModule } from './track/track.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    PrismaModule,
     UserModule,
     ArtistModule,
-    AlbumModule,
     TrackModule,
+    AlbumModule,
     FavoritesModule,
-    LoggingModule,
+    PrismaModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, LoggingService],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggingMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
-  }
-}
+export class AppModule {}

@@ -1,34 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as process from 'node:process';
 import { ValidationPipe } from '@nestjs/common';
-import { AllExceptionsFilter } from './logging/exception.filter';
+import { AuthGuard } from './auth/jwt-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 import { LoggingService } from './logging/logging.service';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { CustomExceptionFilter } from './logging/exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
-
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  );
-
+  const PORT = process.env.PORT || 4000;
+  const app = await NestFactory.create(AppModule);
   const loggingService = app.get(LoggingService);
-  app.useGlobalFilters(new AllExceptionsFilter(loggingService));
 
-  process.on('uncaughtException', (err: Error) => {
-    loggingService.error(`Uncaught Exception: ${err.message}`, err.stack);
+  process.on('uncaughtException', (error) => {
+    loggingService.error('Uncaught Exception', error.stack);
   });
 
-  process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
-    loggingService.error(`Unhandled Rejection: ${reason}`, '');
+  process.on('unhandledRejection', (reason) => {
+    loggingService.error('Unhandled Rejection', JSON.stringify(reason));
   });
 
-  const port = process.env.PORT || 4000;
-  await app.listen(port, () =>
-    console.log(`Application is listening on port: ${port}`),
-  );
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalGuards(new AuthGuard(new JwtService()));
+
+  app.useGlobalFilters(new CustomExceptionFilter(loggingService));
+
+  await app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 }
-
 bootstrap();
