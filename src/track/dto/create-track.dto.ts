@@ -16,7 +16,7 @@ export class CreateTrackDto {
   @IsUUID()
   artistId: string | null;
 
-  @ValidateIf((obj) => obj.artistId !== null)
+  @ValidateIf((obj) => obj.albumId !== null)
   @IsUUID()
   albumId: string | null;
 
