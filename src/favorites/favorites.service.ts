@@ -3,7 +3,6 @@ import {
   forwardRef,
   Inject,
   UnprocessableEntityException,
-  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ArtistService } from '../artist/artist.service';

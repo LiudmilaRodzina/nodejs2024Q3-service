@@ -1,7 +1,5 @@
 import {
   ForbiddenException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,7 +15,7 @@ export class UserService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers() {
     const users = await this.prisma.user.findMany();
     return users.map((user) => ({
       ...user,
@@ -26,7 +24,7 @@ export class UserService {
     }));
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -42,7 +40,7 @@ export class UserService {
     };
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
+  async createUser(createUserDto: CreateUserDto) {
     const timestamp = new Date();
     const salt = await bcrypt.genSalt(this.saltRounds);
     const passwordHash = await bcrypt.hash(createUserDto.password, salt);
@@ -72,9 +70,7 @@ export class UserService {
       where: { id },
     });
 
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
     const passwordMatch = await bcrypt.compare(
       updatePasswordDto.oldPassword,
       user.password,
