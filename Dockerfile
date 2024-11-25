@@ -21,4 +21,4 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 EXPOSE 4000
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start:dev:migrate"]
